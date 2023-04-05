@@ -55,12 +55,12 @@ As seguintes ferramentas foram usadas na construção do projeto:
 
 ### Clone este repositório
 ```bash
-git clone <https://github.com/XXXXXXXX/weather>
+git clone git@github.com:dbserver/dbcamp-template-api.git
 ```
 
 ### Acesse a pasta do projeto no terminal/cmd
 ```bash
-cd weather
+cd dbcamp-template-api
 ```
 
 ### Instale as dependências
@@ -75,7 +75,7 @@ mvn clean package
 
 ### Execute a aplicação
 ```bash
-java -jar target/weather-0.0.1-SNAPSHOT.jar
+java -jar target/template-0.0.1-SNAPSHOT.jar
 ```
 
 ### O servidor inciará na porta:4767 - acesse <http://localhost:4767>
@@ -116,7 +116,7 @@ postgres      latest    80c558ffdc31   7 days ago   379MB
 ```
 ## Executando o banco de dados com docker
 ```bash
-docker run --name postgresql -e POSTGRES_USER=weatheruser -e POSTGRES_PASSWORD=weatherpassword -p 5432:5432 -d postgres
+docker run --name postgresql -e POSTGRES_USER=templateuser -e POSTGRES_PASSWORD=templatepassword -p 5432:5432 -d postgres
 ```
 **No comando dado acima,**
 
