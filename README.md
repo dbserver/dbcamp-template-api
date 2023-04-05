@@ -14,6 +14,7 @@ Tabela de conteúdos
 * [Banco de dados](#-banco-de-dados)
   * [Instalando o banco de dados PostgresSQL](#instalando-o-banco-de-dados-postgressql)
   * [Executando o banco de dados com docker](#executando-o-banco-de-dados-com-docker)
+  * [Cliente para gerenciamento do banco de dados PostgresSQL](#cliente-para-gerenciamento-do-banco-de-dados-postgressql)
 * [Migrations com Flyway](#migrations-com-flyway)
   * [Instalar Flyway](#instalar-flyway)
   * [Padrão de nome de arquivo de migração Flyway](#padrão-de-nome-de-arquivo-de-migração-flyway)
@@ -148,6 +149,9 @@ docker run --name postgresql -e POSTGRES_USER=templateuser -e POSTGRES_PASSWORD=
 CONTAINER ID   IMAGE      COMMAND                  CREATED         STATUS         PORTS                    NAMES
 f33be708db53   postgres   "docker-entrypoint.s…"   4 minutes ago   Up 4 minutes   0.0.0.0:5432->5432/tcp   postgresql
 ```
+
+## Cliente para gerenciamento do banco de dados PostgresSQL
+Para gerenciar, executar scripts sugerimos a utilização do [DBeaver](https://dbeaver.io/download/)
 
 ## Migrations com Flyway
 
