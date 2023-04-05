@@ -80,6 +80,18 @@ java -jar target/template-0.0.1-SNAPSHOT.jar
 
 ### O servidor inciará na porta:4767 - acesse <http://localhost:4767>
 
+# Acesso ao Open API docs (Swagger)
+
+Para acessar o [Open APi (swagger)](https://swagger.io/specification/) da aplicação acesso o link abaixo;
+```
+http://localhost:4767/swagger-ui/index.html
+```
+
+Para acessar o APi docs (json file) da aplicação acesso o link abaixo;
+```
+http://localhost:4767/v3/api-docs
+```
+
 
 # 📁 Arquitetura do projeto
 
@@ -87,13 +99,13 @@ A arquitetura do projeto da-se com uma divisão em 3 camadas com responsabilidad
 
 ![img_1.png](docs/images/img_1.png)
 
-## Classes de controlador como a camada de apresentação (Presentation)
+## Camada de apresentação (Presentation)
 Mantenha essa camada o mais fina possível e limitada à mecânica das operações MVC, por exemplo, recebendo e validando as entradas, manipulando o objeto modelo, retornando o objeto MovedAndView apropriado e assim por diante. Todas as operações relacionadas ao negócio devem ser feitas em classes de serviço. As classes do controlador geralmente são colocadas em um pacote do controlador.
 
-## Classes de serviço como a camada de lógica de negócios (Business Logic)
+## Camada de lógica de negócios (Business Logic)
 Cálculos, transformações de dados, processos de dados e validações entre registros (regras de negócios) geralmente são feitos nessa camada. Eles são chamados pelas classes do controlador e podem chamar repositórios ou outros serviços. As classes de serviço geralmente são colocadas em um pacote de serviço.
 
-## Classes de repositório como camada de acesso a dados (Data)
+## Camada de acesso a dados (Data)
 A responsabilidade dessa camada é limitada às operações Criar, Recuperar, Atualizar e Excluir (CRUD) em uma fonte de dados, que geralmente é um banco de dados relacional ou não relacional. As classes de repositório geralmente são colocadas em um pacote de repositório.
 
 
