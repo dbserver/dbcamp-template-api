@@ -20,6 +20,7 @@ Tabela de conteúdos
   * [Criando uma migration para o Flyway](#criando-uma-migration-para-o-flyway)
   * [Executando uma migration](#executando-uma-migration)
   * [Revertendo uma migration](#revertendo-uma-migration)
+* [Sobre padrões no versionamento do código](#sobre-padrões-no-versionamento-do-código)
 <!--te-->
 
 # Descrição do Projeto
@@ -176,4 +177,6 @@ Pode acontecer que você queira reverter uma migração; execute o comando abaix
 ```bash
 flyway undo -configFiles=flyway.properties
 ```
+# Sobre padrões no versionamento do código
 
+É desejado que seja utilizado o padrão de Commits Semânticos. Pode entender melhor [nesse link](https://github.com/iuricode/padroes-de-commits)
