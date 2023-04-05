@@ -1,10 +1,10 @@
-package com.weather.weather;
+package com.template.weather;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class WeatherApplicationTests {
+class TemplateApplicationTests {
 
 	@Test
 	void contextLoads() {

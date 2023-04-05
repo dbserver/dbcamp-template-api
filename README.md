@@ -85,7 +85,7 @@ java -jar target/weather-0.0.1-SNAPSHOT.jar
 
 A arquitetura do projeto da-se com uma divisão em 3 camadas com responsabilidades distintas:
 
-![img_1.png](img_1.png)
+![img_1.png](docs/images/img_1.png)
 
 ## Classes de controlador como a camada de apresentação (Presentation)
 Mantenha essa camada o mais fina possível e limitada à mecânica das operações MVC, por exemplo, recebendo e validando as entradas, manipulando o objeto modelo, retornando o objeto MovedAndView apropriado e assim por diante. Todas as operações relacionadas ao negócio devem ser feitas em classes de serviço. As classes do controlador geralmente são colocadas em um pacote do controlador.
@@ -153,7 +153,7 @@ flyway -v
 ### Padrão de nome de arquivo de migração Flyway
 Já existe uma pasta criada onde colocar o arquivo de migração; está localizado em resources/db/migration. No entanto, o nome do arquivo deve seguir um padrão específico:
 
-![img.png](img.png)
+![img.png](docs/images/img.png)
 - Parte 1: É a letra "v" em maiúscula. O nome sempre começa com esta letra.
 - Parte 2: É a versão de migração; pode ser 1, 001, 1.2.3, 2021.09.24.12.55.32, ... você entendeu.
 - Parte 3: São os dois sublinhados (_)
