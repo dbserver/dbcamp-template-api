@@ -116,20 +116,40 @@ A responsabilidade dessa camada é limitada às operações Criar, Recuperar, At
 
 - Abra uma nova janela de comando e execute o comando abaixo.
 
+ 
 ```bash
+# Para sistemas unix
 docker pull postgres
 ```
+
+```bash
+# Para sistemas windows
+docker pull stellirin/postgres-windows
+```
+
 - Verificando se a o download da imagem foi realizado com sucesso.
 ```bash
 docker images
 ```
 - Verifique se a imagem do postgres aparece conforme abaixo
+
+Para **sistemas unix** deverá aparecer algo parecido como o abaixo
 ```
 postgres      latest    80c558ffdc31   7 days ago   379MB
 ```
+Para **sistemas windows** deverá aparecer algo parecido como o abaixo
+```
+stellirin/postgres-windows      latest    80c558ffdc31   7 days ago   379MB
+```
+
 ## Executando o banco de dados com docker
+
+OBS: altere o <nome-da-imagem> de acordo com o seu sistema operacional
+- Unix: postgres
+- Windows: stellirin/postgres-windows
+
 ```bash
-docker run --name postgresql -e POSTGRES_USER=templateuser -e POSTGRES_PASSWORD=templatepassword -p 5432:5432 -d postgres
+docker run --name postgresql -e POSTGRES_USER=templateuser -e POSTGRES_PASSWORD=templatepassword -p 5432:5432 -d <nome-da-imagem>
 ```
 **No comando dado acima,**
 
@@ -138,9 +158,10 @@ docker run --name postgresql -e POSTGRES_USER=templateuser -e POSTGRES_PASSWORD=
  - -e POSTGRES_PASSWORD é o parâmetro que permite definir a senha do banco de dados Postgres.
 - -p 5432:5432 é o parâmetro que estabelece uma conexão entre a porta do host e a porta do contêiner do Docker. Nesse caso, ambas as portas são fornecidas como 5432, o que indica que as solicitações enviadas às portas do host serão redirecionadas automaticamente para a porta do contêiner do Docker. Além disso, 5432 também é a mesma porta onde o PostgreSQL estará aceitando requisições do cliente.
 - -d  é o parâmetro que executa o Docker Container no modo desanexado, ou seja, em segundo plano. Se você acidentalmente fechar ou encerrar o Prompt de Comando, o Docker Container ainda será executado em segundo plano.
-- Postgres é o nome da imagem do Docker que foi baixada anteriormente para executar o Docker Container.
+- <nome-da-imagem> é o nome da imagem do Docker que foi baixada anteriormente para executar o Docker Container.
 
 **Para validar se o banco de dados foi executado com sucesso execute o comando abaixo**
+- 
 ```bash
  docker ps --filter "name=postgresql"
 ```
