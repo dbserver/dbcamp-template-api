@@ -28,7 +28,7 @@ Tabela de conteúdos
 * [Sobre padrões no versionamento do código](#sobre-padrões-no-versionamento-do-código)
 <!--te-->
 
-# Status
+## Status
 
 ### Build
 ![](https://github.com/dbserver/dbcamp-template-api/actions/workflows/build_and_test.yml/badge.svg)
@@ -36,7 +36,7 @@ Tabela de conteúdos
 ### Testes
 ![](https://github.com/kolorobot/spring-boot-junit5/workflows/tests/badge.svg)
 
-# Descrição do Projeto
+## Descrição do Projeto
 Projeto template base para novas solução de  API REST com as seguintes pré-configurações:
 - Arquitetura em 3 camadas
 - Docker para a aplicação
@@ -46,7 +46,7 @@ Projeto template base para novas solução de  API REST com as seguintes pré-co
 - Migrations com Flyway
 - Spring Boot
 
-# 👍 Pré-requisitos
+## 👍 Pré-requisitos
 
 Como pré requisitos temos os seguintes itens:
 - Java 11 ou superior
@@ -54,7 +54,7 @@ Como pré requisitos temos os seguintes itens:
 - Maven
 - Flyway
 
-# 🛠 Tecnologias
+## 🛠 Tecnologias
 
 As seguintes ferramentas foram usadas na construção do projeto:
 
@@ -64,7 +64,7 @@ As seguintes ferramentas foram usadas na construção do projeto:
 - [Spring Boot](https://spring.io/)
 - [Maven](https://maven.apache.org/what-is-maven.html)
 
-# 🎬 Iniciando o uso deste projeto
+## 🎬 Iniciando o uso deste projeto
 
 ### Clone este repositório
 ```bash
@@ -93,7 +93,7 @@ java -jar target/template-0.0.1-SNAPSHOT.jar
 
 ### O servidor inciará na porta:4767 - acesse <http://localhost:4767>
 
-# Acesso ao Open API docs (Swagger)
+## Acesso ao Open API docs (Swagger)
 
 Para acessar o [Open APi (swagger)](https://swagger.io/specification/) da aplicação acesso o link abaixo;
 ```
@@ -106,25 +106,25 @@ http://localhost:4767/v3/api-docs
 ```
 
 
-# 📁 Arquitetura do projeto
+## 📁 Arquitetura do projeto
 
 A arquitetura do projeto da-se com uma divisão em 3 camadas com responsabilidades distintas:
 
 ![img_1.png](docs/images/img_1.png)
 
-## Camada de apresentação (Presentation)
+### Camada de apresentação (Presentation)
 Mantenha essa camada o mais fina possível e limitada à mecânica das operações MVC, por exemplo, recebendo e validando as entradas, manipulando o objeto modelo, retornando o objeto MovedAndView apropriado e assim por diante. Todas as operações relacionadas ao negócio devem ser feitas em classes de serviço. As classes do controlador geralmente são colocadas em um pacote do controlador.
 
-## Camada de lógica de negócios (Business Logic)
+### Camada de lógica de negócios (Business Logic)
 Cálculos, transformações de dados, processos de dados e validações entre registros (regras de negócios) geralmente são feitos nessa camada. Eles são chamados pelas classes do controlador e podem chamar repositórios ou outros serviços. As classes de serviço geralmente são colocadas em um pacote de serviço.
 
-## Camada de acesso a dados (Data)
+### Camada de acesso a dados (Data)
 A responsabilidade dessa camada é limitada às operações Criar, Recuperar, Atualizar e Excluir (CRUD) em uma fonte de dados, que geralmente é um banco de dados relacional ou não relacional. As classes de repositório geralmente são colocadas em um pacote de repositório.
 
 
-# 🏬 Banco de dados
+## 🏬 Banco de dados
 
-## Instalando o banco de dados PostgresSQL
+### Instalando o banco de dados PostgresSQL
 
 - Abra uma nova janela de comando e execute o comando abaixo.
 
@@ -226,6 +226,6 @@ Pode acontecer que você queira reverter uma migração; execute o comando abaix
 ```bash
 flyway undo -configFiles=flyway.properties
 ```
-# Sobre padrões no versionamento do código
+## Sobre padrões no versionamento do código
 
 É desejado que seja utilizado o padrão de Commits Semânticos. Pode entender melhor [nesse link](https://github.com/iuricode/padroes-de-commits)
