@@ -1,6 +1,10 @@
+
+
+
 Tabela de conteúdos
 =================
 <!--ts-->
+* [Status (build and test)](#status)
 * [Descrição do projeto](#descrição-do-projeto)
 * [Pré-requisitos](#-pré-requisitos)
 * [Tecnologias](#-tecnologias)
@@ -23,6 +27,14 @@ Tabela de conteúdos
   * [Revertendo uma migration](#revertendo-uma-migration)
 * [Sobre padrões no versionamento do código](#sobre-padrões-no-versionamento-do-código)
 <!--te-->
+
+# Status
+
+### Build
+![](https://github.com/dbserver/dbcamp-template-api/actions/workflows/build_and_test.yml/badge.svg)
+
+### Testes
+![](https://github.com/kolorobot/spring-boot-junit5/workflows/tests/badge.svg)
 
 # Descrição do Projeto
 Projeto template base para novas solução de  API REST com as seguintes pré-configurações:
