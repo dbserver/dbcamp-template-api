@@ -1,10 +1,17 @@
-FROM maven:3.6.0-jdk-11-slim AS build
-COPY src /home/app/src
-COPY pom.xml /home/app
-RUN mvn -f /home/app/pom.xml clean package -Dspring.profiles.active=dev
+#FROM eclipse-temurin:17-jdk-alpine
+#VOLUME /tmp
+#ARG JAR_FILE=target/*.jar
+#EXPOSE 4767
+#COPY ${JAR_FILE} app.jar
+#ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar /app.jar ${0} ${@}"]
+FROM eclipse-temurin:17-jdk-focal
 
-FROM openjdk:11
-COPY --from=build /home/app/target/template.jar /usr/local/lib/template.jar
+WORKDIR /app
 
-EXPOSE 8090
-ENTRYPOINT [ "java", "-Dspring.profiles.active=dev", "-jar", "/usr/local/lib/template.jar" ]
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+RUN ./mvnw dependency:go-offline
+
+COPY src ./src
+
+CMD ["./mvnw", "spring-boot:run"]

@@ -1,0 +1,39 @@
+
+version: '3.6'
+
+services:
+  postgresql:
+    restart: always
+    # windows users
+    # image: stellirin/postgres-windows
+    
+    # unix users
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql-data:/var/lib/postgresql:Z
+    environment:
+      - POSTGRES_USER=templateuser
+      - POSTGRES_PASSWORD=templatepassword
+      - POSTGRES_DB=template-api-db
+
+  api:
+    container_name: api
+    image: template-api-image
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - postgresql
+    ports:
+      - 8080:4767
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=templateuser
+      - SPRING_DATASOURCE_PASSWORD=templatepassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+volumes:
+  postgresql-data:
