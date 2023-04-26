@@ -1,8 +1,0 @@
---create table IF NOT EXISTS tutorials (
---    id bigint not null,
---    description varchar(255),
---    published boolean,
---    title varchar(255), primary key (id)
---);
---
---create sequence tutorials_seq start with 1 increment by 50
