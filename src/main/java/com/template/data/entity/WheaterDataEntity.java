@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Table(name = "WHEATER_DATA")
 @Entity
-public class WheaterData {
+public class WheaterDataEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,7 @@ public class WheaterData {
 
     @ManyToOne
     @JoinColumn(name = "idCity", nullable = false)
-    private City city;
+    private CityEntity city;
 
     private LocalDate date;
 
