@@ -22,12 +22,6 @@ public class CityController {
         this.cityService = cityService;
     }
 
-    @GetMapping("/cities/all")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<CityEntity>> getAllCities() throws IOException {
-        return ResponseEntity.status(HttpStatus.OK).body(cityService.findAll());
-    }
-
     @PostMapping("/register-city")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> postCity(@RequestBody CityRequestDTO cityRequestDTO) throws IOException {
@@ -35,6 +29,11 @@ public class CityController {
 
         BeanUtils.copyProperties(cityRequestDTO, cityEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(cityService.save(cityEntity));
+    }
+    @GetMapping("/cities/all")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<CityEntity>> getAllCities() throws IOException {
+        return ResponseEntity.status(HttpStatus.OK).body(cityService.findAll());
     }
 
 }

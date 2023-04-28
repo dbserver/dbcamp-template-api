@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WheaterDataService {
@@ -24,11 +26,11 @@ public class WheaterDataService {
         return wheaterDataRepository.save(wheaterDataEntity);
     }
 
-    public List<WheaterDataEntity> findAllSeven() throws IOException {
-        return wheaterDataRepository.findTop7ByOrderByDateDesc();
+    public List<WheaterDataEntity> findAll() throws IOException {
+        return wheaterDataRepository.findTopByOrderByDateDesc();
     }
 
-    public Page<WheaterDataEntity> findAllPage(Pageable pageable) {
+    public Page<WheaterDataEntity> findAllPage(Pageable pageable) throws IOException {
         return wheaterDataRepository.findAll(pageable);
     }
 
