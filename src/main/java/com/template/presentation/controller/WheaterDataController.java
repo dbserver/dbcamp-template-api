@@ -30,24 +30,27 @@ public class WheaterDataController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> postWheatherData(@RequestBody WheaterDataRequestDTO wheaterDataRequestDTO) throws IOException {
+    public ResponseEntity<WheaterDataRequestDTO> post(@RequestBody WheaterDataRequestDTO wheaterDataRequestDTO) throws IOException {
         WheaterDataEntity wheaterDataEntity = new WheaterDataEntity();
 
         BeanUtils.copyProperties(wheaterDataRequestDTO, wheaterDataEntity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(wheaterDataService.save(wheaterDataEntity));
+        WheaterDataEntity save = wheaterDataService.save(wheaterDataEntity);
+        wheaterDataRequestDTO.setIdWheaterData(save.getIdWheaterData());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(wheaterDataRequestDTO);
     }
 
     @GetMapping("/list-all")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<WheaterDataEntity>> getAllWheaterData() throws IOException {
+    public ResponseEntity<List<WheaterDataEntity>> getAll() throws IOException {
         var latestWeatherData = wheaterDataService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(latestWeatherData);
     }
 
     @GetMapping("/list-all-page")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Page<WheaterDataEntity>> getWheaterData(@RequestParam(defaultValue = "0") int page,
-                                                                  @RequestParam(defaultValue = "3") int size) throws IOException {
+    public ResponseEntity<Page<WheaterDataEntity>> get(@RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "3") int size) throws IOException {
         Pageable paging = PageRequest.of(page, size, Sort.by("date").descending());
         Page<WheaterDataEntity> pageResult = wheaterDataService.findAllPage(paging);
 
