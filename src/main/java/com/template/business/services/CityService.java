@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CityService {
@@ -25,4 +26,9 @@ public class CityService {
     public List<CityEntity> findAll() throws IOException {
         return cityRepository.findAll();
     }
+
+    public Optional<CityEntity> findById(Long idCity) throws IOException{
+        return cityRepository.findById(idCity);
+    }
+
 }
