@@ -3,6 +3,7 @@ package com.template.presentation.controller;
 import com.template.business.services.WheaterDataService;
 import com.template.data.entity.WheaterDataEntity;
 import com.template.dto.WheaterDataRequestDTO;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +41,7 @@ public class WheaterDataController {
         return ResponseEntity.status(HttpStatus.CREATED).body(wheaterDataRequestDTO);
     }
 
+    @ApiResponse(description = "lista registros de todas as cidades quando NÃO pesquisar a cidade.")
     @GetMapping("/list-all")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<WheaterDataEntity>> getAll() throws IOException {
@@ -47,6 +49,7 @@ public class WheaterDataController {
         return ResponseEntity.status(HttpStatus.OK).body(allWeatherData);
     }
 
+    @ApiResponse(description = "lista todos os registros de uma cidade quando PESQUISAR a cidade.")
     @GetMapping("/{cityName}/list-all")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<WheaterDataEntity>> getAllBy(@PathVariable String cityName) throws IOException {
@@ -55,6 +58,7 @@ public class WheaterDataController {
         return ResponseEntity.status(HttpStatus.OK).body(allWeatherData);
     }
 
+    @ApiResponse(description = "retorna o registro atual SE tiver registro do dia de HOJE.")
     @GetMapping("/{cityName}/list-all-day")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<WheaterDataEntity>> getBy(@PathVariable String cityName) throws IOException {
@@ -64,6 +68,7 @@ public class WheaterDataController {
         return ResponseEntity.status(HttpStatus.OK).body(todayWeatherData);
     }
 
+    @ApiResponse(description = "retorna até 7 dias de registro.")
     @GetMapping("/{cityName}/list-all-week")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<WheaterDataEntity>> getAll(@PathVariable String cityName) throws IOException {

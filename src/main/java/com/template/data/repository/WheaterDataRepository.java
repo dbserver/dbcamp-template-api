@@ -6,12 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public interface WheaterDataRepository extends JpaRepository <WheaterDataEntity, Long> {
 
     List<WheaterDataEntity> findAllByOrderByDateDesc();
-    List<WheaterDataEntity> findAllByCityName(String cityName, Sort sort);
+    List<WheaterDataEntity> findAllByCityNameIgnoreCase(String cityName, Sort sort);
 
     List<WheaterDataEntity> findByDateAndCityName(LocalDate date, String cityName);
 

@@ -10,4 +10,5 @@ public class CityRequestDTO {
     private Long idCity;
 
     private String name;
+
 }

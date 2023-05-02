@@ -23,9 +23,6 @@ import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
@@ -151,7 +148,7 @@ public class WheaterDataTest {
                 17);
 
         Sort sort = Sort.by("date").ascending();
-        when(wheaterDataRepositoryMock.findAllByCityName(name, sort)).thenReturn(List.of(wheaterDataEntityName1, wheaterDataEntityName2));
+        when(wheaterDataRepositoryMock.findAllByCityNameIgnoreCase(name, sort)).thenReturn(List.of(wheaterDataEntityName1, wheaterDataEntityName2));
 
         // Act
         List<WheaterDataEntity> result = wheaterDataServiceMock.findAllByName(name, sort);
@@ -167,7 +164,7 @@ public class WheaterDataTest {
     void findAllByNameFail()  {
         String name = "São Paulo";
         Sort sort = Sort.by("date").descending();
-        when(wheaterDataRepositoryMock.findAllByCityName(eq(name), any(Sort.class)))
+        when(wheaterDataRepositoryMock.findAllByCityNameIgnoreCase(eq(name), any(Sort.class)))
                 .thenThrow(new DataAccessException("Erro ao executar consulta no banco de dados") {});
 
         // When/Then

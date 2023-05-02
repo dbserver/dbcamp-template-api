@@ -8,4 +8,5 @@ import lombok.AllArgsConstructor;
 public class CityResponseDTO {
 
     private String name;
+
 }

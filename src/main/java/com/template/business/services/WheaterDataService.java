@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -21,12 +20,10 @@ public class WheaterDataService {
 
     final WheaterDataRepository wheaterDataRepository;
 
-    final CityRepository cityRepository;
     final CityService cityService;
 
-    public WheaterDataService(WheaterDataRepository wheaterDataRepository, CityRepository cityRepository, CityService cityService) {
+    public WheaterDataService(WheaterDataRepository wheaterDataRepository, CityService cityService) {
         this.wheaterDataRepository = wheaterDataRepository;
-        this.cityRepository = cityRepository;
         this.cityService = cityService;
     }
 
@@ -39,7 +36,7 @@ public class WheaterDataService {
     }
 
     public List<WheaterDataEntity> findAllByName(String cityName, Sort sort) throws IOException {
-        return wheaterDataRepository.findAllByCityName(cityName, sort);
+        return wheaterDataRepository.findAllByCityNameIgnoreCase(cityName, sort);
     }
 
     public List<WheaterDataEntity> findDateCurrent(LocalDate date, String cityName) throws IOException {
@@ -58,22 +55,10 @@ public class WheaterDataService {
         Optional<WheaterDataEntity> wheaterDataEntityOptional = wheaterDataRepository.findById(idWheaterData);
         Optional<CityEntity> cityEntityOptional = cityService.findById(wheaterDataEntityOptional.get().getCity().getIdCity());
 
-        //System.out.println(cityEntityOptional);
-       // var cityEntity = cityEntityOptional.get();
-       // System.out.println(cityEntity);
         var wheaterDataEntity = wheaterDataEntityOptional.get();
-        System.out.println(wheaterDataEntity); //gramado
 
-        var cityEntity = wheaterDataEntity.getCity();
-        System.out.println(cityEntity); //gramado
-
-        cityEntity.setName(wheaterDataRequestDTO.getCity().getName());
-        System.out.println(cityEntity); //floripa
-
-        wheaterDataEntity.setCity(cityEntity);
-        System.out.println(wheaterDataEntity); //floripa
-
-        cityRepository.save(cityEntity);
+        cityEntityOptional.get().setName(wheaterDataRequestDTO.getCity().getName());
+        cityService.save(cityEntityOptional.get());
 
         wheaterDataEntity.setDate(wheaterDataRequestDTO.getDate());
         wheaterDataEntity.setDayTimeEnum(wheaterDataRequestDTO.getDayTimeEnum());
