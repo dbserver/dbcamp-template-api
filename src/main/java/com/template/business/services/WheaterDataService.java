@@ -39,12 +39,12 @@ public class WheaterDataService {
         return wheaterDataRepository.findAllByCityNameIgnoreCase(cityName, sort);
     }
 
-    public List<WheaterDataEntity> findByDateBetween(String cityName, LocalDate startDate, LocalDate endDate) throws IOException {
-        return wheaterDataRepository.findByCityNameAndDateBetween(cityName, startDate, endDate);
+    public List<WheaterDataEntity> findByDateBetween(String cityName, LocalDate startDate, LocalDate endDate, Sort sort) throws IOException {
+        return wheaterDataRepository.findByCityNameAndDateBetweenIgnoreCase(cityName, startDate, endDate, sort);
     }
 
     public Page<WheaterDataEntity> findAllPageByName(Pageable pageable, String cityName) throws IOException {
-        return wheaterDataRepository.findAllByCityName(cityName, pageable);
+        return wheaterDataRepository.findAllByCityNameIgnoreCase(cityName, pageable);
     }
 
     public Page<WheaterDataEntity> findAllPage(Pageable pageable) throws IOException {
@@ -58,7 +58,6 @@ public class WheaterDataService {
         var wheaterDataEntity = wheaterDataEntityOptional.get();
 
         cityEntityOptional.get().setName(wheaterDataRequestDTO.getCity().getName());
-        cityService.save(cityEntityOptional.get());
 
         wheaterDataEntity.setDate(wheaterDataRequestDTO.getDate());
         wheaterDataEntity.setDayTimeEnum(wheaterDataRequestDTO.getDayTimeEnum());

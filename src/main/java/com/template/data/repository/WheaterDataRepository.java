@@ -15,9 +15,9 @@ public interface WheaterDataRepository extends JpaRepository <WheaterDataEntity,
     List<WheaterDataEntity> findAllByOrderByDateDesc();
     List<WheaterDataEntity> findAllByCityNameIgnoreCase(String cityName, Sort sort);
 
-    Page<WheaterDataEntity> findAllByCityName(String cityName, Pageable pageable);
+    Page<WheaterDataEntity> findAllByCityNameIgnoreCase(String cityName, Pageable pageable);
 
-    List<WheaterDataEntity> findByCityNameAndDateBetween(String cityName, LocalDate startDate, LocalDate endDate);
+    List<WheaterDataEntity> findByCityNameAndDateBetweenIgnoreCase(String cityName, LocalDate startDate, LocalDate endDate, Sort sort);
 
     void deleteById (Long idWheaterData);
 }

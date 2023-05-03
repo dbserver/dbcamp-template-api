@@ -27,7 +27,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 
-import java.io.IOException;
 import java.time.LocalDate;
 
 import java.util.*;
@@ -40,9 +39,6 @@ public class WheaterDataTest {
 
     @Mock
     WheaterDataRepository wheaterDataRepositoryMock;
-
-    @Mock
-    WheaterDataRequestDTO wheaterDataRequestDTOMock;
 
     @Mock
     CityService cityServiceMock;
@@ -169,7 +165,7 @@ public class WheaterDataTest {
                 70,
                 17);
 
-        Sort sort = Sort.by("date").ascending();
+        Sort sort = Sort.by("date").descending();
         when(wheaterDataRepositoryMock.findAllByCityNameIgnoreCase(name, sort)).thenReturn(List.of(wheaterDataEntityName1, wheaterDataEntityName2));
 
         // Act
@@ -183,12 +179,15 @@ public class WheaterDataTest {
 
     @Test
     void findAllByNameFailure()  {
+        // Arrange
         String name = "São Paulo";
         Sort sort = Sort.by("date").descending();
+
+        // Act
         when(wheaterDataRepositoryMock.findAllByCityNameIgnoreCase(eq(name), any(Sort.class)))
                 .thenThrow(new DataAccessException("Erro ao executar consulta no banco de dados") {});
 
-        // When/Then
+        // Assert
         assertThrows(DataAccessException.class, () -> {
             wheaterDataServiceMock.findAllByName(name, sort);
         });
@@ -201,6 +200,7 @@ public class WheaterDataTest {
         LocalDate today = LocalDate.now();
         LocalDate days = today.plusDays(6);
         String name = "Porto Alegre";
+        Sort sort = Sort.by("date").ascending();
 
         List<WheaterDataEntity> entityList = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
@@ -210,10 +210,10 @@ public class WheaterDataTest {
             entityList.add(entity);
         }
 
-        when(wheaterDataRepositoryMock.findByCityNameAndDateBetween(name, today, days)).thenReturn(entityList);
+        when(wheaterDataRepositoryMock.findByCityNameAndDateBetweenIgnoreCase(name, today, days, sort)).thenReturn(entityList);
 
         // Act
-        List<WheaterDataEntity> resultList = wheaterDataServiceMock.findByDateBetween(name, today, days);
+        List<WheaterDataEntity> resultList = wheaterDataServiceMock.findByDateBetween(name, today, days, sort);
 
         // Assert
         for (int i = 0; i < 6; i++) {
@@ -227,13 +227,14 @@ public class WheaterDataTest {
         LocalDate today = LocalDate.now();
         LocalDate days = today.plusDays(6);
         String name = "Porto Alegre";
+        Sort sort = Sort.by("date").ascending();
 
-        when(wheaterDataRepositoryMock.findByCityNameAndDateBetween(eq(name), eq(today), eq(days)))
+        when(wheaterDataRepositoryMock.findByCityNameAndDateBetweenIgnoreCase(eq(name), eq(today), eq(days), any(Sort.class)))
                 .thenThrow(new RuntimeException("Failed to connect to database"));
 
         // Act
         Throwable throwable = assertThrows(RuntimeException.class, () -> {
-            wheaterDataServiceMock.findByDateBetween(name, today, days);
+            wheaterDataServiceMock.findByDateBetween(name, today, days, sort);
         });
 
         // Assert
@@ -299,15 +300,15 @@ public class WheaterDataTest {
     @Test
     public void updateFailure() {
         // Arrange
-        Long idWheaterData = 602L;
-        WheaterDataEntity wheaterDataEntityMock = wheaterDataEntityLis1tMock();
+        Long idWheaterData = 100L;
         WheaterDataRequestDTO wheaterDataRequestDTOList = wheaterDataRequestDTOMock();
 
-      //  when(wheaterDataRepositoryMock.findById(idWheaterData)).thenReturn(Optional.of(wheaterDataEntityMock));
-        when(wheaterDataRepositoryMock.findById(idWheaterData)).thenReturn(Optional.empty());
+        // Act
+        when(wheaterDataRepositoryMock.findById(idWheaterData))
+                .thenThrow(new DataAccessException("Erro ao executar consulta no banco de dados") {});
 
-        // Act and Assert
-        assertThrows(NoSuchElementException.class, () -> {
+        // Assert
+        assertThrows(DataAccessException.class, () -> {
             wheaterDataServiceMock.update(idWheaterData, wheaterDataRequestDTOList);
         });
     }
@@ -326,7 +327,7 @@ public class WheaterDataTest {
     void deleteFailure() {
         // Arrange
         Long id = 403L;
-        doThrow(new DataIntegrityViolationException("Erro ao excluir"))
+        doThrow(new DataIntegrityViolationException("Erro ao excluir os dados"))
                 .when(wheaterDataRepositoryMock).deleteById(id);
 
         // Assert

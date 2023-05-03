@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4767")
@@ -58,12 +57,13 @@ public class WheaterDataController {
         return ResponseEntity.status(HttpStatus.OK).body(allWeatherData);
     }
 
+    @ApiResponse(description = "lista o registro do dia atual mais 6 dias consecutivos.")
     @GetMapping("/{cityName}/list-all-week")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<WheaterDataEntity>> getBy(@PathVariable String cityName) throws IOException {
         LocalDate today = LocalDate.now();
-        LocalDate sixDaysFromToday = today.plusDays(7);
-        List<WheaterDataEntity> wheaterDataList = wheaterDataService.findByDateBetween(cityName, today, sixDaysFromToday);
+        LocalDate sixDaysFromToday = today.plusDays(6);
+        List<WheaterDataEntity> wheaterDataList = wheaterDataService.findByDateBetween(cityName, today, sixDaysFromToday, Sort.by("date").ascending());
 
         if (wheaterDataList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
