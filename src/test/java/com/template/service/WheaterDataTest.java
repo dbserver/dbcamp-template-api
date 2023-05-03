@@ -1,5 +1,6 @@
 package com.template.service;
 
+import com.template.business.services.CityService;
 import com.template.business.services.WheaterDataService;
 import com.template.data.entity.CityEntity;
 import com.template.data.entity.WheaterDataEntity;
@@ -7,6 +8,7 @@ import com.template.data.entity.enums.DayTimeEnum;
 import com.template.data.entity.enums.NightTimeEnum;
 import com.template.data.repository.WheaterDataRepository;
 
+import com.template.dto.WheaterDataRequestDTO;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,10 +27,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
 public class WheaterDataTest {
@@ -38,6 +40,12 @@ public class WheaterDataTest {
 
     @Mock
     WheaterDataRepository wheaterDataRepositoryMock;
+
+    @Mock
+    WheaterDataRequestDTO wheaterDataRequestDTOMock;
+
+    @Mock
+    CityService cityServiceMock;
 
     @InjectMocks
     WheaterDataService wheaterDataServiceMock;
@@ -70,6 +78,20 @@ public class WheaterDataTest {
         );
     }
 
+    public WheaterDataRequestDTO wheaterDataRequestDTOMock() {
+        return new WheaterDataRequestDTO(602L,
+                new CityEntity(202L, "Porto Alegre"),
+                LocalDate.of(2023, 4, 28),
+                DayTimeEnum.SOL_COM_NUVENS,
+                NightTimeEnum.NUBLADA,
+                22,
+                15,
+                6,
+                26,
+                10
+        );
+    }
+
     @Test
     void saveSuccessfully() {
         // Arrange
@@ -81,7 +103,7 @@ public class WheaterDataTest {
     }
 
     @Test
-    void saveFail() {
+    void saveFailure() {
         // Arrange
         when(wheaterDataRepositoryMock.save(wheaterDataEntiytMock)).thenThrow(new RuntimeException("Erro ao salvar os dados"));
 
@@ -111,7 +133,7 @@ public class WheaterDataTest {
 
     @SneakyThrows
     @Test
-    void findAllFail() {
+    void findAllFailure() {
         // Arrange
         when(wheaterDataRepositoryMock.findAllByOrderByDateDesc()).thenThrow(new RuntimeException("Erro ao retornar os dados"));
 
@@ -157,11 +179,10 @@ public class WheaterDataTest {
         for (WheaterDataEntity entity : result) {
             assertEquals(name, entity.getCity().getName());
         }
-
     }
 
     @Test
-    void findAllByNameFail()  {
+    void findAllByNameFailure()  {
         String name = "São Paulo";
         Sort sort = Sort.by("date").descending();
         when(wheaterDataRepositoryMock.findAllByCityNameIgnoreCase(eq(name), any(Sort.class)))
@@ -175,94 +196,120 @@ public class WheaterDataTest {
 
     @SneakyThrows
     @Test
-    void findDateCurrentSuccessfully() {
+    void findByDateBetweenSuccessfully() {
         // Arrange
         LocalDate today = LocalDate.now();
+        LocalDate days = today.plusDays(6);
         String name = "Porto Alegre";
 
-        WheaterDataEntity wheaterDataEntityList1 = wheaterDataEntityLis1tMock();
-
-        when(wheaterDataRepositoryMock.findByDateAndCityName(today, name)).thenReturn(List.of(wheaterDataEntityList1));
-
-        // Act
-        List<WheaterDataEntity> resultList = wheaterDataServiceMock.findDateCurrent(today, name);
-
-        // Assert
-        assertEquals(name, resultList.get(0).getCity().getName());
-    }
-
-    @Test
-    void findDateCurrentFail() {
-        // Arrange
-        LocalDate date = LocalDate.now();
-        String name = "Rio de Janeiro";
-
-        when(wheaterDataRepositoryMock.findByDateAndCityName(eq(date), eq(name)))
-                .thenThrow(new DataAccessException("Erro ao executar consulta no banco de dados") {});
-
-        // Assert
-        assertThrows(DataAccessException.class, () -> {
-            wheaterDataServiceMock.findDateCurrent(date, name);
-        });
-    }
-
-    @SneakyThrows
-    @Test
-    void findAllNextDaysSuccessfull() {
-        // Arrange
-        LocalDate date =  LocalDate.of(2023, 4, 20);
-        WheaterDataEntity wheaterDataEntityName1 = new WheaterDataEntity(1L, new CityEntity(201L, "Porto Alegre"),
-                date,
-                DayTimeEnum.NUBLADO,
-                NightTimeEnum.NUBLADA,
-                19,
-                10,
-                6,
-                26,
-                10);
-
-        LocalDate today = LocalDate.now();
-        int days = 7;
-        Sort sort = Sort.by("date").ascending();
-        String name = "Gramado";
-
         List<WheaterDataEntity> entityList = new ArrayList<>();
-        for (int i = 0; i < days; i++) {
+        for (int i = 0; i < 6; i++) {
             WheaterDataEntity entity = new WheaterDataEntity();
             entity.setDate(today.plusDays(i));
-            entity.setCity(new CityEntity(1L, name));
+            entity.setCity(new CityEntity(202L, name));
             entityList.add(entity);
         }
 
-        when(wheaterDataRepositoryMock.findTop7ByCityNameOrderByDateAsc(eq(name), any(Sort.class)))
-                .thenReturn(entityList);
+        when(wheaterDataRepositoryMock.findByCityNameAndDateBetween(name, today, days)).thenReturn(entityList);
 
         // Act
-        List<WheaterDataEntity> resultList = wheaterDataServiceMock.findAllNextDays(name, sort);
+        List<WheaterDataEntity> resultList = wheaterDataServiceMock.findByDateBetween(name, today, days);
 
         // Assert
-        assertEquals(days, resultList.size());
-        for (int i = 0; i < days; i++) {
+        for (int i = 0; i < 6; i++) {
             assertEquals(today.plusDays(i), resultList.get(i).getDate());
         }
     }
 
     @Test
-    public void findAllNextDaysFail() {
+    public void findByDateBetweenFailure() {
         // Arrange
-        Sort sort = Sort.by("date").ascending();
-        String name = "Gramado";
+        LocalDate today = LocalDate.now();
+        LocalDate days = today.plusDays(6);
+        String name = "Porto Alegre";
 
-        when(wheaterDataRepositoryMock.findTop7ByCityNameOrderByDateAsc(eq(name), any(Sort.class)))
+        when(wheaterDataRepositoryMock.findByCityNameAndDateBetween(eq(name), eq(today), eq(days)))
                 .thenThrow(new RuntimeException("Failed to connect to database"));
 
         // Act
         Throwable throwable = assertThrows(RuntimeException.class, () -> {
-            wheaterDataServiceMock.findAllNextDays(name, sort);
+            wheaterDataServiceMock.findByDateBetween(name, today, days);
         });
 
         // Assert
         assertEquals("Failed to connect to database", throwable.getMessage());
+    }
+
+    @SneakyThrows
+    @Test
+    public void updateSuccessfully() {
+        //Arrange
+        Long id = 1001L;
+        CityEntity city = new CityEntity(202L, "Porto Alegre");
+        LocalDate date = LocalDate.of(2023, 5, 1);
+        DayTimeEnum dayTime = DayTimeEnum.CHUVA;
+        NightTimeEnum nightTime = NightTimeEnum.TEMPESTADE;
+        int maxTemperature = 25;
+        int minTemperature = 14;
+        int windSpeed = 8;
+        int humidity = 60;
+        int precipitation = 1020;
+
+        WheaterDataRequestDTO wheaterDataRequestDTO = new WheaterDataRequestDTO(id, city, date, dayTime, nightTime,
+                maxTemperature, minTemperature, windSpeed, humidity, precipitation);
+
+        when(cityServiceMock.findById(city.getIdCity())).thenReturn(Optional.of(city));
+
+        WheaterDataEntity entity = new WheaterDataEntity(id, city, date, dayTime, nightTime,
+                maxTemperature, minTemperature, windSpeed, humidity, precipitation);
+
+        when(wheaterDataRepositoryMock.findById(entity.getIdWheaterData())).thenReturn(Optional.of(entity));
+        when(wheaterDataRepositoryMock.save(entity)).thenReturn(entity);
+
+        // Act
+        WheaterDataEntity updatedEntity = wheaterDataServiceMock.update(id, wheaterDataRequestDTO);
+
+        // Assert
+        assertEquals(id, updatedEntity.getIdWheaterData());
+        assertEquals(city, updatedEntity.getCity());
+        assertEquals(date, updatedEntity.getDate());
+        assertEquals(dayTime, updatedEntity.getDayTimeEnum());
+        assertEquals(nightTime, updatedEntity.getNightTimeEnum());
+
+        Optional<Integer> maxTemperatureOptional = Optional.ofNullable(maxTemperature);
+        Optional<Integer> maxTemperatureOptionalUpdatedEntity = Optional.ofNullable(maxTemperature);
+        assertEquals(maxTemperatureOptional.map((Integer::valueOf)), maxTemperatureOptionalUpdatedEntity.map(Integer::valueOf));
+
+        Optional<Integer> minTemperatureOptional = Optional.ofNullable(minTemperature);
+        Optional<Integer> minTemperatureOptionalUpdatedEntity = Optional.ofNullable(minTemperature);
+        assertEquals(minTemperatureOptional.map((Integer::valueOf)), minTemperatureOptionalUpdatedEntity.map(Integer::valueOf));
+
+        Optional<Integer> windSpeedOptional = Optional.ofNullable(windSpeed);
+        Optional<Integer> windSpeedOptionalUpdatedEntity = Optional.ofNullable(windSpeed);
+        assertEquals(windSpeedOptional.map((Integer::valueOf)), windSpeedOptionalUpdatedEntity.map(Integer::valueOf));
+
+        Optional<Integer> humiditySpeedOptional = Optional.ofNullable(humidity);
+        Optional<Integer> humidityOptionalUpdatedEntity = Optional.ofNullable(humidity);
+        assertEquals(humiditySpeedOptional.map((Integer::valueOf)), humidityOptionalUpdatedEntity.map(Integer::valueOf));
+
+        Optional<Integer> precipitationOptional = Optional.ofNullable(precipitation);
+        Optional<Integer> precipitationOptionalUpdatedEntity = Optional.ofNullable(precipitation);
+        assertEquals(precipitationOptional.map((Integer::valueOf)), precipitationOptionalUpdatedEntity.map(Integer::valueOf));
+    }
+    @Test
+    public void updateFailure() {
+        // Arrange
+        Long idWheaterData = 602L;
+        WheaterDataEntity wheaterDataEntityMock = wheaterDataEntityLis1tMock();
+        WheaterDataRequestDTO wheaterDataRequestDTOList = wheaterDataRequestDTOMock();
+
+      //  when(wheaterDataRepositoryMock.findById(idWheaterData)).thenReturn(Optional.of(wheaterDataEntityMock));
+        when(wheaterDataRepositoryMock.findById(idWheaterData)).thenReturn(Optional.empty());
+
+        // Act and Assert
+        assertThrows(NoSuchElementException.class, () -> {
+            wheaterDataServiceMock.update(idWheaterData, wheaterDataRequestDTOList);
+        });
     }
 
     @SneakyThrows
@@ -276,7 +323,7 @@ public class WheaterDataTest {
     }
 
     @Test
-    void deleteFail() {
+    void deleteFailure() {
         // Arrange
         Long id = 403L;
         doThrow(new DataIntegrityViolationException("Erro ao excluir"))

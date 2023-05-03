@@ -58,24 +58,35 @@ public class WheaterDataController {
         return ResponseEntity.status(HttpStatus.OK).body(allWeatherData);
     }
 
-    @ApiResponse(description = "retorna o registro atual SE tiver registro do dia de HOJE.")
-    @GetMapping("/{cityName}/list-all-day")
+    @GetMapping("/{cityName}/list-all-week")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<WheaterDataEntity>> getBy(@PathVariable String cityName) throws IOException {
         LocalDate today = LocalDate.now();
-        List<WheaterDataEntity> todayWeatherData = wheaterDataService.findDateCurrent(today, cityName);
+        LocalDate sixDaysFromToday = today.plusDays(7);
+        List<WheaterDataEntity> wheaterDataList = wheaterDataService.findByDateBetween(cityName, today, sixDaysFromToday);
 
-        return ResponseEntity.status(HttpStatus.OK).body(todayWeatherData);
+        if (wheaterDataList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(wheaterDataList, HttpStatus.OK);
     }
 
-    @ApiResponse(description = "retorna até 7 dias de registro.")
-    @GetMapping("/{cityName}/list-all-week")
+    @ApiResponse(description = "lista 10 registros por página quando PESQUISAR uma cidade.")
+    @GetMapping("/{cityName}/list-all-page")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<WheaterDataEntity>> getAll(@PathVariable String cityName) throws IOException {
-        var wheaterData = wheaterDataService.findAllNextDays(cityName, Sort.by("date").ascending());
-        return ResponseEntity.ok(wheaterData);
+    public ResponseEntity<Page<WheaterDataEntity>> get(@RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "10") int size, @PathVariable String cityName) throws IOException {
+        Pageable paging = PageRequest.of(page, size, Sort.by("date").descending());
+        Page<WheaterDataEntity> pageResult = wheaterDataService.findAllPageByName(paging, cityName);
+
+        if (pageResult.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(pageResult, HttpStatus.OK);
     }
 
+    @ApiResponse(description = "lista 10 registros por página, quando NÃO pesquisar uma cidade.")
     @GetMapping("/list-all-page")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Page<WheaterDataEntity>> get(@RequestParam(defaultValue = "0") int page,

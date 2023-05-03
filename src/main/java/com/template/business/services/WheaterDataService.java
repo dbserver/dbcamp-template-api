@@ -39,12 +39,12 @@ public class WheaterDataService {
         return wheaterDataRepository.findAllByCityNameIgnoreCase(cityName, sort);
     }
 
-    public List<WheaterDataEntity> findDateCurrent(LocalDate date, String cityName) throws IOException {
-        return wheaterDataRepository.findByDateAndCityName(date, cityName);
+    public List<WheaterDataEntity> findByDateBetween(String cityName, LocalDate startDate, LocalDate endDate) throws IOException {
+        return wheaterDataRepository.findByCityNameAndDateBetween(cityName, startDate, endDate);
     }
 
-    public List<WheaterDataEntity> findAllNextDays(String cityName, Sort sort) throws IOException {
-        return wheaterDataRepository.findTop7ByCityNameOrderByDateAsc(cityName, sort);
+    public Page<WheaterDataEntity> findAllPageByName(Pageable pageable, String cityName) throws IOException {
+        return wheaterDataRepository.findAllByCityName(cityName, pageable);
     }
 
     public Page<WheaterDataEntity> findAllPage(Pageable pageable) throws IOException {
@@ -71,6 +71,7 @@ public class WheaterDataService {
 
         return wheaterDataRepository.save(wheaterDataEntity);
     }
+
     public void deleteById(Long idWheaterData) throws IOException {
         wheaterDataRepository.deleteById(idWheaterData);
     }
