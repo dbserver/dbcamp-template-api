@@ -2,7 +2,6 @@ package com.template.service;
 
 import com.template.business.services.CityService;
 import com.template.data.entity.CityEntity;
-import com.template.data.entity.WheaterDataEntity;
 import com.template.data.repository.CityRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
@@ -14,8 +13,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessException;
 
-import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
