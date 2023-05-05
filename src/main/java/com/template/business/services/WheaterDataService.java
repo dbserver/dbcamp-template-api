@@ -1,11 +1,11 @@
 package com.template.business.services;
 
+import com.template.config.exceptions.NoContentException;
 import com.template.data.entity.CityEntity;
 import com.template.data.entity.WheaterDataEntity;
-import com.template.data.repository.CityRepository;
 import com.template.data.repository.WheaterDataRepository;
-import com.template.dto.WheaterDataRequestDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,9 +22,12 @@ public class WheaterDataService {
 
     final CityService cityService;
 
-    public WheaterDataService(WheaterDataRepository wheaterDataRepository, CityService cityService) {
+    final NoContentException noContentException;
+
+    public WheaterDataService(WheaterDataRepository wheaterDataRepository, CityService cityService, NoContentException noContentException) {
         this.wheaterDataRepository = wheaterDataRepository;
         this.cityService = cityService;
+        this.noContentException = noContentException;
     }
 
     public WheaterDataEntity save(WheaterDataEntity wheaterDataEntity) throws IOException {
@@ -39,43 +42,70 @@ public class WheaterDataService {
         return wheaterDataRepository.findAllByCityNameIgnoreCase(cityName, sort);
     }
 
-    public List<WheaterDataEntity> findByDateBetween(String cityName, LocalDate startDate, LocalDate endDate, Sort sort) throws IOException {
-        return wheaterDataRepository.findByCityNameAndDateBetweenIgnoreCase(cityName, startDate, endDate, sort);
+    public List<WheaterDataEntity> findByDateBetween(String cityName) throws IOException {
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = startDate.plusDays(6);
+        Sort sort = Sort.by("date").ascending();
+
+        List<WheaterDataEntity> wheaterDataList = wheaterDataRepository.findByCityNameIgnoreCaseAndDateBetween(cityName, startDate, endDate, sort);
+
+        if (wheaterDataList.isEmpty()) {
+            throw noContentException;
+        }
+
+        return wheaterDataList;
     }
 
-    public Page<WheaterDataEntity> findAllPageByName(Pageable pageable, String cityName) throws IOException {
-        return wheaterDataRepository.findAllByCityNameIgnoreCase(cityName, pageable);
+    public Page<WheaterDataEntity> findAllPageByName(String cityName) throws IOException {
+        Integer page = 0;
+        Integer size = 10;
+        Pageable pageableByCity = PageRequest.of(page, size, Sort.by("date").descending());
+
+        Page<WheaterDataEntity> pageByCityResult = wheaterDataRepository.findAllByCityNameIgnoreCase(cityName, pageableByCity);
+        if (pageByCityResult.isEmpty()) {
+            throw noContentException;
+        }
+
+        return pageByCityResult;
     }
 
-    public Page<WheaterDataEntity> findAllPage(Pageable pageable) throws IOException {
-        return wheaterDataRepository.findAll(pageable);
+    public Page<WheaterDataEntity> findAllPage() throws IOException {
+        Integer page = 0;
+        Integer size = 10;
+        Pageable pageableAll = PageRequest.of(page, size, Sort.by("date").descending());
+
+        Page<WheaterDataEntity> pageAllResult = wheaterDataRepository.findAll(pageableAll);
+
+        if (pageAllResult.isEmpty()) {
+            throw noContentException;
+        }
+
+        return pageAllResult;
     }
 
-    public WheaterDataEntity update(Long idWheaterData, WheaterDataRequestDTO wheaterDataRequestDTO) throws IOException{
+    public WheaterDataEntity update(Long idWheaterData, WheaterDataEntity wheaterDataEntity) throws IOException{
         Optional<WheaterDataEntity> wheaterDataEntityOptional = wheaterDataRepository.findById(idWheaterData);
         Optional<CityEntity> cityEntityOptional = cityService.findById(wheaterDataEntityOptional.get().getCity().getIdCity());
 
-        var wheaterDataEntity = wheaterDataEntityOptional.get();
+        cityEntityOptional.get().setName(wheaterDataEntity.getCity().getName());
+        CityEntity cityEntity = cityEntityOptional.get();
 
-        cityEntityOptional.get().setName(wheaterDataRequestDTO.getCity().getName());
+        WheaterDataEntity wheaterDataEntityUpdate = wheaterDataEntityOptional.get();
 
-        wheaterDataEntity.setDate(wheaterDataRequestDTO.getDate());
-        wheaterDataEntity.setDayTimeEnum(wheaterDataRequestDTO.getDayTimeEnum());
-        wheaterDataEntity.setNightTimeEnum(wheaterDataRequestDTO.getNightTimeEnum());
-        wheaterDataEntity.setMaxTemperature(wheaterDataRequestDTO.getMaxTemperature());
-        wheaterDataEntity.setMinTemperature(wheaterDataRequestDTO.getMinTemperature());
-        wheaterDataEntity.setPrecipitation(wheaterDataRequestDTO.getPrecipitation());
-        wheaterDataEntity.setHumidity(wheaterDataRequestDTO.getHumidity());
-        wheaterDataEntity.setWindSpeed(wheaterDataRequestDTO.getWindSpeed());
+        wheaterDataEntityUpdate.setCity(cityEntity);
+        wheaterDataEntityUpdate.setDate(wheaterDataEntity.getDate());
+        wheaterDataEntityUpdate.setDayTimeEnum(wheaterDataEntity.getDayTimeEnum());
+        wheaterDataEntityUpdate.setNightTimeEnum(wheaterDataEntity.getNightTimeEnum());
+        wheaterDataEntityUpdate.setMaxTemperature(wheaterDataEntity.getMaxTemperature());
+        wheaterDataEntityUpdate.setMinTemperature(wheaterDataEntity.getMinTemperature());
+        wheaterDataEntityUpdate.setPrecipitation(wheaterDataEntity.getPrecipitation());
+        wheaterDataEntityUpdate.setHumidity(wheaterDataEntity.getHumidity());
+        wheaterDataEntityUpdate.setWindSpeed(wheaterDataEntity.getWindSpeed());
 
-        return wheaterDataRepository.save(wheaterDataEntity);
+        return wheaterDataRepository.save(wheaterDataEntityUpdate);
     }
 
     public void deleteById(Long idWheaterData) throws IOException {
         wheaterDataRepository.deleteById(idWheaterData);
     }
-
-
-
-
 }

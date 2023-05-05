@@ -1,20 +1,18 @@
 package com.template.presentation.controller;
 
 import com.template.business.services.WheaterDataService;
+import com.template.config.exceptions.NoContentException;
 import com.template.data.entity.WheaterDataEntity;
 import com.template.dto.WheaterDataRequestDTO;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4767")
@@ -24,8 +22,11 @@ public class WheaterDataController {
 
     final WheaterDataService wheaterDataService;
 
-    public WheaterDataController(WheaterDataService wheaterDataService) {
+    final NoContentException errorHandling;
+
+    public WheaterDataController(WheaterDataService wheaterDataService, NoContentException errorHandling) {
         this.wheaterDataService = wheaterDataService;
+        this.errorHandling = errorHandling;
     }
 
     @PostMapping("/register")
@@ -45,6 +46,7 @@ public class WheaterDataController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<WheaterDataEntity>> getAll() throws IOException {
         var allWeatherData = wheaterDataService.findAll();
+
         return ResponseEntity.status(HttpStatus.OK).body(allWeatherData);
     }
 
@@ -61,27 +63,16 @@ public class WheaterDataController {
     @GetMapping("/{cityName}/list-all-week")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<WheaterDataEntity>> getBy(@PathVariable String cityName) throws IOException {
-        LocalDate today = LocalDate.now();
-        LocalDate sixDaysFromToday = today.plusDays(6);
-        List<WheaterDataEntity> wheaterDataList = wheaterDataService.findByDateBetween(cityName, today, sixDaysFromToday, Sort.by("date").ascending());
+        List<WheaterDataEntity> wheaterDataList = wheaterDataService.findByDateBetween(cityName);
 
-        if (wheaterDataList.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(wheaterDataList, HttpStatus.OK);
     }
 
     @ApiResponse(description = "lista 10 registros por página quando PESQUISAR uma cidade.")
     @GetMapping("/{cityName}/list-all-page")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Page<WheaterDataEntity>> get(@RequestParam(defaultValue = "0") int page,
-                                                       @RequestParam(defaultValue = "10") int size, @PathVariable String cityName) throws IOException {
-        Pageable paging = PageRequest.of(page, size, Sort.by("date").descending());
-        Page<WheaterDataEntity> pageResult = wheaterDataService.findAllPageByName(paging, cityName);
-
-        if (pageResult.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+    public ResponseEntity<Page<WheaterDataEntity>> get(@PathVariable String cityName) throws IOException {
+        Page<WheaterDataEntity> pageResult = wheaterDataService.findAllPageByName(cityName);
 
         return new ResponseEntity<>(pageResult, HttpStatus.OK);
     }
@@ -89,22 +80,21 @@ public class WheaterDataController {
     @ApiResponse(description = "lista 10 registros por página, quando NÃO pesquisar uma cidade.")
     @GetMapping("/list-all-page")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Page<WheaterDataEntity>> get(@RequestParam(defaultValue = "0") int page,
-                                                            @RequestParam(defaultValue = "10") int size) throws IOException {
-        Pageable paging = PageRequest.of(page, size, Sort.by("date").descending());
-        Page<WheaterDataEntity> pageResult = wheaterDataService.findAllPage(paging);
-
-        if (pageResult.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+    public ResponseEntity<Page<WheaterDataEntity>> get() throws IOException {
+        Page<WheaterDataEntity> pageResult = wheaterDataService.findAllPage();
 
         return new ResponseEntity<>(pageResult, HttpStatus.OK);
     }
 
     @PutMapping("/{idWheaterData}")
-    public ResponseEntity<WheaterDataEntity> put(@PathVariable(value = "idWheaterData") Long idWheaterData, @RequestBody WheaterDataRequestDTO wheaterDataRequestDTO) throws IOException{
-        WheaterDataEntity updateWheaterDataEntity = wheaterDataService.update(idWheaterData, wheaterDataRequestDTO);
-        return ResponseEntity.ok(updateWheaterDataEntity);
+    public ResponseEntity<WheaterDataRequestDTO> put(@PathVariable(value = "idWheaterData") Long idWheaterData, @RequestBody WheaterDataRequestDTO wheaterDataRequestDTO) throws IOException{
+        WheaterDataEntity wheaterDataEntity = new WheaterDataEntity();
+
+        BeanUtils.copyProperties(wheaterDataRequestDTO, wheaterDataEntity);
+        WheaterDataEntity updateWheaterDataEntity = wheaterDataService.update(idWheaterData, wheaterDataEntity);
+        wheaterDataRequestDTO.setIdWheaterData(updateWheaterDataEntity.getIdWheaterData());
+
+        return ResponseEntity.ok(wheaterDataRequestDTO);
     }
 
     @DeleteMapping("/{idWheaterData}")
