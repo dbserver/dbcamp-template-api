@@ -1,12 +1,11 @@
 package com.template.config.exceptions;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-@Configuration
-public class NoContentException extends RuntimeException implements NoContentExceptionInterface {
-
-    @Override
-    public NoContentException noContentException() {
-        return new NoContentException();
+@ResponseStatus(HttpStatus.NO_CONTENT)
+public class NoContentException extends RuntimeException {
+    public NoContentException(String message) {
+        super(message);
     }
 }

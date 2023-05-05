@@ -22,12 +22,9 @@ public class WheaterDataService {
 
     final CityService cityService;
 
-    final NoContentException noContentException;
-
-    public WheaterDataService(WheaterDataRepository wheaterDataRepository, CityService cityService, NoContentException noContentException) {
+    public WheaterDataService(WheaterDataRepository wheaterDataRepository, CityService cityService) {
         this.wheaterDataRepository = wheaterDataRepository;
         this.cityService = cityService;
-        this.noContentException = noContentException;
     }
 
     public WheaterDataEntity save(WheaterDataEntity wheaterDataEntity) throws IOException {
@@ -50,7 +47,7 @@ public class WheaterDataService {
         List<WheaterDataEntity> wheaterDataList = wheaterDataRepository.findByCityNameIgnoreCaseAndDateBetween(cityName, startDate, endDate, sort);
 
         if (wheaterDataList.isEmpty()) {
-            throw noContentException;
+            throw new NoContentException("No Content");
         }
 
         return wheaterDataList;
@@ -62,8 +59,9 @@ public class WheaterDataService {
         Pageable pageableByCity = PageRequest.of(page, size, Sort.by("date").descending());
 
         Page<WheaterDataEntity> pageByCityResult = wheaterDataRepository.findAllByCityNameIgnoreCase(cityName, pageableByCity);
+
         if (pageByCityResult.isEmpty()) {
-            throw noContentException;
+            throw new NoContentException("No Content");
         }
 
         return pageByCityResult;
@@ -77,7 +75,7 @@ public class WheaterDataService {
         Page<WheaterDataEntity> pageAllResult = wheaterDataRepository.findAll(pageableAll);
 
         if (pageAllResult.isEmpty()) {
-            throw noContentException;
+            throw new NoContentException("No Content");
         }
 
         return pageAllResult;

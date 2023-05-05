@@ -1,7 +1,6 @@
 package com.template.presentation.controller;
 
 import com.template.business.services.WheaterDataService;
-import com.template.config.exceptions.NoContentException;
 import com.template.data.entity.WheaterDataEntity;
 import com.template.dto.WheaterDataRequestDTO;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,11 +21,8 @@ public class WheaterDataController {
 
     final WheaterDataService wheaterDataService;
 
-    final NoContentException errorHandling;
-
-    public WheaterDataController(WheaterDataService wheaterDataService, NoContentException errorHandling) {
+    public WheaterDataController(WheaterDataService wheaterDataService) {
         this.wheaterDataService = wheaterDataService;
-        this.errorHandling = errorHandling;
     }
 
     @PostMapping("/register")
